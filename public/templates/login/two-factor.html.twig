@@ -1,0 +1,68 @@
+{% extends "shared/index.html.twig" %}
+
+{% block style %}
+{{ parent() }}
+<style>
+    .container {
+        width: 20rem;
+        height: 20rem;
+        display: flex;
+        row-gap: 20px;
+        flex-direction: column;
+        user-select: none;
+    }
+
+    .container label {
+        font-family: Arial, Helvetica, sans-serif;
+        display: flex;
+        flex-direction: column;
+        font-size: 12pt;
+    }
+
+    .error {
+        font-size: 10pt;
+        color: brown;
+        padding: 5px 0px;
+    }
+
+    .container label input {
+        height: 25px;
+        border: 1px solid black;
+        border-radius: 3px;
+    }
+
+    .container button {
+        height: 30px;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-family: monospace;
+        font-size: 12pt;
+        cursor: pointer;
+    }
+
+    .two-factor {
+        text-transform: uppercase;
+        font-weight: bolder;
+        font-size: 13pt;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<form method="post" action="/two-factor" class="container">
+    <label>
+        <p>
+            Enter <span class="two-factor">2fa</span> token:
+        </p>
+        <input type="text" name="token" />
+
+        {% if errors.token %}
+        <span class="error">{{errors.token}}</span>
+        {% endif %}
+
+    </label>
+
+    <button type="submit">Login</button>
+</form>
+
+{% endblock %}
