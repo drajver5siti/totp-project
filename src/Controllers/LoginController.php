@@ -8,6 +8,7 @@ use App\Attributes\Get;
 use App\Attributes\Post;
 use App\Repositories\UserRepository;
 use App\Services\AuthenticationServiceInterface;
+use App\Services\Implementations\TOTPService;
 use App\View;
 
 class LoginController
@@ -15,7 +16,8 @@ class LoginController
     public function __construct(
         private AuthenticationServiceInterface $auth,
         private UserRepository $users,
-        private View $view
+        private View $view,
+        private TOTPService $totp,
     ) {
     }
 
@@ -48,34 +50,33 @@ class LoginController
         }
 
         $user = $this->users->findByUsername($username);
-        if (!$user || $user['password'] !== $password) {
+        if (!$user || !password_verify($password, $user['password'])) {
             return $this->view->make('login/index', ['errors' => ['password' => 'Invalid credentials']]);
         }
 
-        $this->auth->authenticate($username);
-        header("Location: " . "/two-factor");
+        return $this->view->make('login/two-factor', ['username' => $username]);
     }
 
-    #[Get('/two-factor')]
-    public function twoFactor()
-    {
-        if (!$this->auth->isAuthenticated()) {
-            header("Location: " . "/login");
-        }
-
-        return $this->view->make('login/two-factor');
-    }
-
-    #[Post('/two-factor')]
+    #[Post('/login/two-factor')]
     public function twoFactorConfirm()
     {
-        $token = $_POST['token'] ?? null;
+        $token =    $_POST['token'] ?? null;
+        $username = $_POST['username'];
 
-        if ($token || false) {
-            return $this->view->make('login/two-factor', ['errors' => 'Invalid token']);
+        $secret = $this->users->findByUsername($username)['totp_secret'];
+
+        if (!$token || !$this->totp->validate($secret, $token)) {
+            return $this->view->make('login/two-factor', ['username' => $username, 'errors' => ['token' => 'Invalid token.']]);
         }
 
-        $this->auth->login();
+        $this->auth->login($username);
         header("Location: " . "/");
+    }
+
+    #[Get('/logout')]
+    public function logout()
+    {
+        $this->auth->logout();
+        header("Location: " . "/login");
     }
 }

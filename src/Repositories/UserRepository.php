@@ -29,5 +29,7 @@ class UserRepository
 
     public function save(array $user)
     {
+        $statement = $this->db->prepare("INSERT INTO Users VALUES(:username, :password, :totp_secret)");
+        $statement->execute($user);
     }
 }

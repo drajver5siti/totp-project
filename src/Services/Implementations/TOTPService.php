@@ -27,7 +27,7 @@ class TOTPService
         $hmac = hash_hmac(
             "sha1",
             pack('J', $this->getNumberOfStepsElapsedSinceUnix()),
-            Base32::decodeUpper($secret),
+            Base32::decodeUpper(strtoupper($secret)),
             true
         );
 
@@ -47,5 +47,15 @@ class TOTPService
         $otp = $code % (pow(10, self::TOKEN_LENGTH));
 
         return str_pad((string) $otp, self::TOKEN_LENGTH, "0", STR_PAD_LEFT);
+    }
+
+    public function validate(string $secret, string $token)
+    {
+        return $this->generateOTPToken($secret) === $token;
+    }
+
+    public function generateQRPath(string $secret, ?string $username = null): string
+    {
+        return "otpauth://totp/IB-proekt" . ($username ? ":$username" : "") . "?secret=$secret&algorithm=SHA1&digits=" . self::TOKEN_LENGTH . "&period=" . self::TIME_STEP;
     }
 }

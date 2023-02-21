@@ -49,7 +49,8 @@
 {% endblock %}
 
 {% block body %}
-<form method="post" action="/two-factor" class="container">
+<form method="post" action="/login/two-factor" class="container">
+    <input type="hidden" name="username" value="{{ username }}" />
     <label>
         <p>
             Enter <span class="two-factor">2fa</span> token:

@@ -1,0 +1,55 @@
+{% extends "shared/index.html.twig" %}
+{% block style %}
+{{ parent() }}
+    <style>
+        .container {
+
+        }
+        .container p {
+            font-weight: bold;
+        }
+
+        .error {
+            font-size: 10pt;
+            color: brown;
+            padding: 5px 0px;
+        }
+        .two-factor {
+            text-transform: uppercase;
+            font-weight: bolder;
+            font-size: 13pt;
+        }
+    </style>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    const copyToClipboard = () => {
+        const secret = "{{ secret }}";
+        navigator.clipboard.writeText(secret);
+    }
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Two factor authentication</h1>
+    <img src="{{ qr }}"/> <br />
+    <span class="two-factor">{{ secret | split('', 4) | join(' ') | upper }}</span> <span><button type="button" onclick="copyToClipboard()">Copy</button></span>
+
+    <form action="/register/two-factor" method="post">
+        <input type="hidden" name="username" value="{{ username }}"/>
+        <input type="hidden" name="password" value="{{ password }}"/>
+        <input type="hidden" name="secret" value="{{ secret }}"/>
+        <input type="hidden" name="qr" value="{{ qr }}" />
+        <br/>
+        Token: <br/>
+        <input name="token"/> <br />
+        {% if errors.token %}
+        <span class="error">{{errors.token}}</span> <br />
+        {% endif %}
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+{% endblock %}

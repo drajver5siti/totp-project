@@ -12,8 +12,6 @@ use App\Services\AuthenticationServiceInterface;
 use App\Services\EmailServiceInterface;
 use App\Services\Implementations\SendgridEmailService;
 use App\Services\Implementations\SessionAuthenticationService;
-use App\Services\Implementations\TOTPService;
-use App\Services\OTPServiceInterface;
 use PDOException;
 
 class App
@@ -24,9 +22,8 @@ class App
     private function initDB()
     {
         try {
-            $this->db->exec("CREATE TABLE Users(username VARCHAR(255) PRIMARY KEY, password VARCHAR(255), totp_token VARCHAR(255));");
+            $this->db->exec("CREATE TABLE Users(username VARCHAR(255) PRIMARY KEY, password VARCHAR(255), totp_secret VARCHAR(255));");
         } catch (PDOException $e) {
-            // table already exists, very good code i know
         }
     }
 

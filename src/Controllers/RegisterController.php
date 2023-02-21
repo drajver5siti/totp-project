@@ -8,7 +8,9 @@ use App\Attributes\Get;
 use App\Attributes\Post;
 use App\Repositories\UserRepository;
 use App\Services\AuthenticationServiceInterface;
+use App\Services\Implementations\TOTPService;
 use App\View;
+use chillerlan\QRCode\QRCode;
 
 class RegisterController
 {
@@ -16,6 +18,7 @@ class RegisterController
         private AuthenticationServiceInterface $auth,
         private UserRepository $users,
         private View $view,
+        private TOTPService $totp
     ) {
     }
 
@@ -52,7 +55,40 @@ class RegisterController
             return $this->view->make('register/index', ['errors' => ['password' => 'User already exists']]);
         }
 
+        $password = password_hash($password, PASSWORD_BCRYPT);
 
-        return $this->view->make('register/index', ['username' => $username, 'password' => $password, '2fa' => null]);
+        $secret = $this->totp->generateSharedSecret();
+        $qrpath = $this->totp->generateQRPath($secret, $username);
+        $qr = (new QRCode)->render($qrpath);
+
+        return $this->view->make('register/two-factor', ['username' => $username, 'password' => $password, 'secret' => $secret, 'qr' => $qr]);
+    }
+
+    #[Post('/register/two-factor')]
+    public function twoFactorConfirm()
+    {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $secret   = $_POST['secret'];
+        $token    = $_POST['token'];
+        $qr       = $_POST['qr'];
+
+
+        if ($this->totp->generateOTPToken($secret) !== $token) {
+            return $this->view->make(
+                'register/two-factor',
+                [
+                    'username' => $username,
+                    'password' => $password,
+                    'secret' => $secret,
+                    'qr' => $qr,
+                    'errors' => ['token' => 'Invalid token.']
+                ]
+            );
+        }
+
+        $this->users->save(['username' => $username, 'password' =>  $password, 'totp_secret' => $secret]);
+        $this->auth->login($username);
+        header("Location: " . "/");
     }
 }
