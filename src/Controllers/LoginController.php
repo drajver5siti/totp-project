@@ -70,7 +70,7 @@ class LoginController
         }
 
         $this->auth->login($username);
-        header("Location: " . "/");
+        header("Location: " . "/profile");
     }
 
     #[Get('/logout')]

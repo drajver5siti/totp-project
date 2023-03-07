@@ -1,5 +1,7 @@
 {% extends "/shared/index.html.twig" %}
 
+
 {% block body %}
-<h1>Home Page</h1>
+<h1>Welcome, {{ user.username }}</h1>
+<a href="/logout">Logout</a>
 {% endblock %}

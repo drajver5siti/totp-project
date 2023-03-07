@@ -9,17 +9,29 @@
     <style>
         html {
             margin: 0px;
+            padding: 0px;
             height: 100%;
-            width: 100%;
         }
 
         body {
             margin: 0px;
+            padding: 0px;
+            /* height: 100%; */
             min-height: 100%;
-            width: 100%;
+        }
+
+        #main {
             display: grid;
             place-items: center;
-            margin-top: -10rem;
+        }
+
+        #main-nav ul {
+            display: flex;
+            column-gap: 2rem;
+        }
+
+        #main-nav ul li {
+            list-style: none;
         }
     </style>
     {% endblock %}
@@ -28,8 +40,24 @@
 </head>
 
 <body>
-    {% block body %}
-    {% endblock %}
+    <nav id="main-nav">
+        <ul>
+            <li>
+                <a href="/">
+                    Home
+                </a>
+            </li>
+            <li>
+                <a href="/profile">
+                    Profile
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div id="main">
+        {% block body %}
+        {% endblock %}
+    </div>
 </body>
 
 </html>

@@ -6,6 +6,7 @@ namespace App;
 
 use App\Controllers\HomeController;
 use App\Controllers\LoginController;
+use App\Controllers\ProfileController;
 use App\Controllers\RegisterController;
 use App\Exceptions\RouteNotFoundException;
 use App\Services\AuthenticationServiceInterface;
@@ -41,7 +42,8 @@ class App
             ->registerControllers([
                 HomeController::class,
                 LoginController::class,
-                RegisterController::class
+                RegisterController::class,
+                ProfileController::class
             ]);
     }
 

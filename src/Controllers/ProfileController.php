@@ -9,7 +9,7 @@ use App\Repositories\UserRepository;
 use App\Services\AuthenticationServiceInterface;
 use App\View;
 
-class HomeController
+class ProfileController
 {
     public function __construct(
         private AuthenticationServiceInterface $auth,
@@ -18,9 +18,14 @@ class HomeController
     ) {
     }
 
-    #[Get('/')]
+    #[Get('/profile')]
     public function index()
     {
-        return $this->view->make('home/index');
+        if (!$this->auth->isLoggedIn()) {
+            header("Location: /login");
+        }
+
+        $user = $this->users->findByUsername($this->auth->getUsername());
+        return $this->view->make('profile/index', ['user' => $user]);
     }
 }
