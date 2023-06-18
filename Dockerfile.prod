@@ -15,4 +15,12 @@ RUN printf '[PHP]\ndate.timezone = "Europe/Skopje"\n' > /usr/local/etc/php/conf.
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
+EXPOSE 9000
+
 WORKDIR /var/www/ib-proekt.com
+
+COPY composer.json composer.json
+
+RUN composer install --no-dev --no-interaction --optimize-autoloader
+
+COPY . .
