@@ -31,6 +31,6 @@ jobs:
                     context: .
                     file: ./Dockerfile.prod
                     push: true
-                    tags: ${{ secrets.DOCKERHUB_USERNAME }}/totp-php:latest
+                    tags: ${{ secrets.DOCKERHUB_USERNAME }}/totp-php:1.0
 
 
