@@ -12,7 +12,7 @@ use App\Exceptions\RouteNotFoundException;
 use App\Services\AuthenticationServiceInterface;
 use App\Services\EmailServiceInterface;
 use App\Services\Implementations\SendgridEmailService;
-use App\Services\Implementations\SessionAuthenticationService;
+use App\Services\Implementations\JWTAuthenticationService;
 use PDOException;
 
 class App
@@ -60,7 +60,7 @@ class App
         $this->container->set(View::class, fn () => $this->view);
 
         $this->container->set(EmailServiceInterface::class, SendgridEmailService::class);
-        $this->container->set(AuthenticationServiceInterface::class, SessionAuthenticationService::class);
+        $this->container->set(AuthenticationServiceInterface::class, JWTAuthenticationService::class);
 
         $this->registerControllers();
         $this->initDB();

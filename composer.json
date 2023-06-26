@@ -16,6 +16,7 @@
         "vlucas/phpdotenv": "^5.5",
         "twig/twig": "^3.5",
         "chillerlan/php-qrcode": "^4.3",
-        "paragonie/constant_time_encoding": "^2.6"
+        "paragonie/constant_time_encoding": "^2.6",
+        "firebase/php-jwt": "^6.8"
     }
 }
